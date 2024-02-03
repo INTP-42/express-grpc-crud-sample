@@ -1,4 +1,4 @@
-const service = require('../grpc/service')
+const {customerService} = require('../grpc/service')
 
 module.exports = (app) => {
   app.get('/liveness', (req, res) => {
@@ -11,7 +11,7 @@ module.exports = (app) => {
   })
 
   app.get("/", (req, res) => {
-    service.getAll(null, (err, data) => {
+    customerService.getAll(null, (err, data) => {
         if (!err) {
             res.render("customers", {
                 results: data.customers
@@ -27,7 +27,7 @@ module.exports = (app) => {
           address: req.body.address
       };
 
-      service.insert(newCustomer, (err, data) => {
+      customerService.insert(newCustomer, (err, data) => {
           if (err) throw err;
 
           console.log("Customer created successfully", data);
@@ -43,7 +43,7 @@ module.exports = (app) => {
           address: req.body.address
       };
 
-      service.update(updateCustomer, (err, data) => {
+      customerService.update(updateCustomer, (err, data) => {
           if (err) throw err;
 
           console.log("Customer updated successfully", data);
@@ -52,7 +52,7 @@ module.exports = (app) => {
   });
 
   app.post("/remove", (req, res) => {
-      service.remove({ id: req.body.customer_id }, (err, _) => {
+      customerService.remove({ id: req.body.customer_id }, (err, _) => {
           if (err) throw err;
 
           console.log("Customer removed successfully");

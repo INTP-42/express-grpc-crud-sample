@@ -2,7 +2,7 @@ const grpc = require("@grpc/grpc-js");
 const { GRPC_PORT, APP_NAME } = require("./config");
 const { loadProtoFile } = require("./utilities");
 const customersProto = loadProtoFile("customers.proto");
-const customer_impl = require("./grpc/service_impl");
+const {customerService} = require("./grpc/impl");
 
 class GrpcServerSingleton {
   constructor() {
@@ -21,7 +21,7 @@ class GrpcServerSingleton {
       this.server = new grpc.Server();
       this.server.addService(
         customersProto.CustomerService.service,
-        customer_impl
+        customerService
       );
 
       this.server.bindAsync(
