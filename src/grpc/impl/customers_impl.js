@@ -1,75 +1,90 @@
-const { v4: uuidv4 } = require("uuid");
 const grpc = require("@grpc/grpc-js");
-
-const customers = [
-    {
-        id: "a68b823c-7ca6-44bc-b721-fb4d5312cafc",
-        name: "John Bolton",
-        age: 23,
-        address: "Address 1"
-    },
-    {
-        id: "34415c7c-f82d-4e44-88ca-ae2a1aaa92b7",
-        name: "Mary Anne",
-        age: 45,
-        address: "Address 2"
-    }
-];
+const customerDao = require('../../common/dao/customerDao');
 
 module.exports = {
-  getAll: (_, callback) => {
-    callback(null, { customers });
+  getAll: async (_, callback) => {
+    try {
+      const customers = await customerDao.getMultipleCustomerInstance({});
+      callback(null, { customers });
+    } catch (error) {
+      callback({
+        code: grpc.status.INTERNAL,
+        details: "Error fetching customers",
+      });
+    }
   },
 
-  get: (call, callback) => {
-    let customer = customers.find((n) => n.id == call.request.id);
+  get: async (call, callback) => {
+    try {
+      const customer = await customerDao.getCustomerInstance({ id: call.request.id });
+      if (customer) {
+        callback(null, customer);
+      } else {
+        callback({
+          code: grpc.status.NOT_FOUND,
+          details: "Not found",
+        });
+      }
+    } catch (error) {
+      callback({
+        code: grpc.status.INTERNAL,
+        details: "Error fetching customer",
+      });
+    }
+  },
 
-    if (customer) {
+  insert: async (call, callback) => {
+    try {
+      let customer = call.request;
+      await customerDao.saveCustomer(customer);
       callback(null, customer);
-    } else {
+    } catch (error) {
       callback({
-        code: grpc.status.NOT_FOUND,
-        details: "Not found",
+        code: grpc.status.INTERNAL,
+        details: "Error inserting customer",
       });
     }
   },
 
-  insert: (call, callback) => {
-    let customer = call.request;
-
-    customer.id = uuidv4();
-    customers.push(customer);
-    callback(null, customer);
-  },
-
-  update: (call, callback) => {
-    let existingCustomer = customers.find((n) => n.id == call.request.id);
-
-    if (existingCustomer) {
-      existingCustomer.name = call.request.name;
-      existingCustomer.age = call.request.age;
-      existingCustomer.address = call.request.address;
-      callback(null, existingCustomer);
-    } else {
+  update: async (call, callback) => {
+    try {
+      const existingCustomer = await customerDao.getCustomerInstance({ id: call.request.id });
+      if (existingCustomer) {
+        existingCustomer.name = call.request.name;
+        existingCustomer.age = call.request.age;
+        existingCustomer.address = call.request.address;
+        await customerDao.updateCustomerInstance({ id: call.request.id }, existingCustomer);
+        callback(null, existingCustomer);
+      } else {
+        callback({
+          code: grpc.status.NOT_FOUND,
+          details: "Not found",
+        });
+      }
+    } catch (error) {
       callback({
-        code: grpc.status.NOT_FOUND,
-        details: "Not found",
+        code: grpc.status.INTERNAL,
+        details: "Error updating customer",
       });
     }
   },
 
-  remove: (call, callback) => {
-    let existingCustomerIndex = customers.findIndex(
-      (n) => n.id == call.request.id
-    );
-
-    if (existingCustomerIndex != -1) {
-      customers.splice(existingCustomerIndex, 1);
-      callback(null, {});
-    } else {
+  remove: async (call, callback) => {
+    try {
+      const existingCustomer = await customerDao.getCustomerInstance({ id: call.request.id });
+      if (existingCustomer) {
+        await customerDao.removeCustomer({ id: call.request.id });
+        callback(null, {});
+      } else {
+        callback({
+          code: grpc.status.NOT_FOUND,
+          details: "Not found",
+        });
+      }
+    } catch (error) {
       callback({
-        code: grpc.status.NOT_FOUND,
-        details: "Not found",
+        code: grpc.status.INTERNAL,
+        details: "Error removing customer",
       });
     }
   },
