@@ -11,6 +11,7 @@
     "build:firstTime": "npm install",
     "dev": "NODE_ENV=development nodemon src/app.js",
     "start": "NODE_ENV=production node src/app.js",
+    "grpc": "NODE_ENV=development nodemon src/grpc/index.js",
     "test": "mocha  tests/*.test.js  --timeout 250000 --exit --bail"
   },
   "keywords": [

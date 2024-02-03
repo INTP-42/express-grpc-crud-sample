@@ -1,14 +1,19 @@
 const express = require("express");
 const http = require("http");
+const path = require("path");
 const server = require("./server");
+const bodyParser = require("body-parser");
 
 const { PORT, APP_NAME } = require("./config");
 
 const app = express();
 app.set("port", PORT);
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "hbs");
 
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
+
 const httpserver = http.createServer(app);
 server(app);
 
