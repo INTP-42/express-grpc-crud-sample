@@ -1,22 +1,44 @@
 const grpc = require("@grpc/grpc-js");
-const { GRPC_PORT, APP_NAME } = require("./config");
+const { GRPC_PORT, APP_NAME, TLS_SUPPORTED } = require("./config");
 const { loadProtoFile } = require("./utilities");
 const customersProto = loadProtoFile("customers.proto");
 const {customerService} = require("./grpc/impl");
+const fs = require('fs')
 
 class GrpcServerSingleton {
   constructor() {
     this.server = null;
     this.start = this.start.bind(this);
     this.shutdown = this.shutdown.bind(this);
-
+    this.creds = null
     process.on("SIGINT", () => {
       console.log("Caught interrupt signal");
       this.shutdown();
     });
   }
 
+  generateCred(){
+    if (this.creds !== null){
+      throw new Error('gRPC server credentials are set during intialization only')
+    }
+    if (TLS_SUPPORTED) {
+      const rootCert = fs.readFileSync('./ssl/ca.crt');
+      const certChain = fs.readFileSync('./ssl/server.crt');
+      const privateKey = fs.readFileSync('./ssl/server.pem');
+
+      this.creds = grpc.ServerCredentials.createSsl(rootCert, [{
+        cert_chain: certChain,
+        private_key: privateKey,
+      }]);
+    } else {
+      this.creds = grpc.ServerCredentials.createInsecure();
+    }
+  }
+  
   start() {
+    if (!this.creds){
+      this.generateCred()
+    }
     if (!this.server) {
       this.server = new grpc.Server();
       this.server.addService(
@@ -26,7 +48,7 @@ class GrpcServerSingleton {
 
       this.server.bindAsync(
         GRPC_PORT,
-        grpc.ServerCredentials.createInsecure(),
+        this.creds,
         (err, _) => {
           if (!err) {
             console.log(
