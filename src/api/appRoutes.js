@@ -30,14 +30,14 @@ module.exports = (app) => {
       customerService.insert(newCustomer, (err, data) => {
           if (err) throw err;
 
-          console.log("Customer created successfully", data);
+          console.log("Customer created successfully with customer ID", data._id);
           res.redirect("/");
       });
   });
 
   app.post("/update", (req, res) => {
       const updateCustomer = {
-          id: req.body.id,
+          _id: req.body._id,
           name: req.body.name,
           age: req.body.age,
           address: req.body.address
@@ -46,13 +46,13 @@ module.exports = (app) => {
       customerService.update(updateCustomer, (err, data) => {
           if (err) throw err;
 
-          console.log("Customer updated successfully", data);
+          console.log("Customer updated successfully");
           res.redirect("/");
       });
   });
 
   app.post("/remove", (req, res) => {
-      customerService.remove({ id: req.body.customer_id }, (err, _) => {
+      customerService.remove({ _id: req.body._id }, (err, _) => {
           if (err) throw err;
 
           console.log("Customer removed successfully");

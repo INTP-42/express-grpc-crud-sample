@@ -33,14 +33,14 @@
             <tbody>
                 {{#each results}}
                 <tr>
-                    <td>{{ id }}</td>
+                    <td>{{ _id }}</td>
                     <td>{{ name }}</td>
                     <td>{{ age }} years old</td>
                     <td>{{ address }}</td>
                     <td>
-                        <a href="javascript:void(0);" class="btn btn-sm edit custom-btn" data-id="{{ id }}"
+                        <a href="javascript:void(0);" class="btn btn-sm edit custom-btn" data-id="{{ _id }}"
                             data-name="{{ name }}" data-age="{{ age }}" data-address="{{ address }}">Edit</a>
-                        <a href="javascript:void(0);" class="btn btn-sm btn-danger remove" data-id="{{ id }}">Remove</a>
+                        <a href="javascript:void(0);" class="btn btn-sm btn-danger remove" data-id="{{ _id }}">Remove</a>
                     </td>
                 </tr>
                 {{else}}
@@ -116,7 +116,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <input type="hidden" name="id" class="customer_id">
+                        <input type="hidden" name="_id" class="customer_id">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn custom-btn">Update</button>
                     </div>
@@ -138,7 +138,7 @@
                         Are you sure?
                     </div>
                     <div class="modal-footer">
-                        <input type="hidden" name="customer_id" class="form-control customer_id_removal"
+                        <input type="hidden" name="_id" class="form-control customer_id_removal"
                             required="required">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn custom-btn">Remove</button>

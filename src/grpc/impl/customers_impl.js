@@ -16,7 +16,7 @@ module.exports = {
 
   get: async (call, callback) => {
     try {
-      const customer = await customerDao.getCustomerInstance({ id: call.request.id });
+      const customer = await customerDao.getCustomerInstance({ _id: call.request._id});
       if (customer) {
         callback(null, customer);
       } else {
@@ -48,12 +48,12 @@ module.exports = {
 
   update: async (call, callback) => {
     try {
-      const existingCustomer = await customerDao.getCustomerInstance({ id: call.request.id });
+      const existingCustomer = await customerDao.getCustomerInstance({ _id: call.request._id });
       if (existingCustomer) {
         existingCustomer.name = call.request.name;
         existingCustomer.age = call.request.age;
         existingCustomer.address = call.request.address;
-        await customerDao.updateCustomerInstance({ id: call.request.id }, existingCustomer);
+        await customerDao.updateCustomerInstance({ _id: call.request._id }, existingCustomer);
         callback(null, existingCustomer);
       } else {
         callback({
@@ -71,9 +71,9 @@ module.exports = {
 
   remove: async (call, callback) => {
     try {
-      const existingCustomer = await customerDao.getCustomerInstance({ id: call.request.id });
+      const existingCustomer = await customerDao.getCustomerInstance({ _id: call.request._id });
       if (existingCustomer) {
-        await customerDao.removeCustomer({ id: call.request.id });
+        await customerDao.removeCustomer({ _id: call.request._id });
         callback(null, {});
       } else {
         callback({
