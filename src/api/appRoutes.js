@@ -28,9 +28,9 @@ module.exports = (app) => {
       };
 
       customerService.insert(newCustomer, (err, data) => {
-          if (err) throw err;
+          if (err) console.log(err);
 
-          console.log("Customer created successfully with customer ID", data._id);
+          console.log("Customer created successfully with customer ID", data._id.toString());
           res.redirect("/");
       });
   });
@@ -44,7 +44,7 @@ module.exports = (app) => {
       };
 
       customerService.update(updateCustomer, (err, data) => {
-          if (err) throw err;
+          if (err) console.log(err);
 
           console.log("Customer updated successfully");
           res.redirect("/");
@@ -53,9 +53,9 @@ module.exports = (app) => {
 
   app.post("/remove", (req, res) => {
       customerService.remove({ _id: req.body._id }, (err, _) => {
-          if (err) throw err;
+          if (err) console.log(err);
 
-          console.log("Customer removed successfully");
+          console.log("Customer removed successfully",req.body._id);
           res.redirect("/");
       });
   });

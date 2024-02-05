@@ -36,7 +36,7 @@ module.exports = {
   insert: async (call, callback) => {
     try {
       let customer = call.request;
-      await customerDao.saveCustomer(customer);
+      customer = await customerDao.saveCustomer(customer);
       callback(null, customer);
     } catch (error) {
       callback({
