@@ -5,27 +5,20 @@
     <title>CRUD with gRPC and Node</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <style>
-        .custom-btn {
-            background-color: #764abc;
-            color: white;
-        }
-    </style>
 </head>
 
 <body>
     <div class="container">
         <div class="py-5 text-center">
             <h2>Customer's List</h2>
-            <p class="lead">Example of CRUD made with Node.js, Express, Handlebars and gRPC</p>
+            <p class="lead">Example of CRUD made with Express and gRPC</p>
         </div>
 
         <table class="table" id="customers_table">
             <thead>
                 <tr>
-                    <th>Customer ID</th>
                     <th>Customer Name</th>
-                    <th>Age</th>
+                    <th>Age (years)</th>
                     <th>Address</th>
                     <th>Action</th>
                 </tr>
@@ -33,12 +26,11 @@
             <tbody>
                 {{#each results}}
                 <tr>
-                    <td>{{ _id }}</td>
                     <td>{{ name }}</td>
-                    <td>{{ age }} years old</td>
+                    <td>{{ age }}</td>
                     <td>{{ address }}</td>
                     <td>
-                        <a href="javascript:void(0);" class="btn btn-sm edit custom-btn" data-id="{{ _id }}"
+                        <a href="javascript:void(0);" class="btn btn-sm edit btn-primary" data-id="{{ _id }}"
                             data-name="{{ name }}" data-age="{{ age }}" data-address="{{ address }}">Edit</a>
                         <a href="javascript:void(0);" class="btn btn-sm btn-danger remove" data-id="{{ _id }}">Remove</a>
                     </td>
@@ -71,7 +63,7 @@
                         </div>
 
                         <div class="form-group">
-                            <input type="number" name="age" class="form-control" placeholder="Age" required="required">
+                            <input type="number" name="age" class="form-control" placeholder="Age" min="18" max="100" required="required">
                         </div>
 
                         <div class="form-group">
@@ -81,7 +73,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn custom-btn">Create</button>
+                        <button type="submit" class="btn btn-primary">Create</button>
                     </div>
                 </div>
             </div>
@@ -95,7 +87,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Edit Customer</h4>
-                        <button type="button" class="close" data-dismiss="modal">
+                        <button type="button btn-secondary" class="close" data-dismiss="modal">
                             <span>&times;</span>
                         </button>
                     </div>
@@ -107,7 +99,7 @@
 
                         <div class="form-group">
                             <input type="number" name="age" class="form-control age" placeholder="Age"
-                                required="required">
+                                min="18" max="100" required="required">
                         </div>
 
                         <div class="form-group">
@@ -118,7 +110,7 @@
                     <div class="modal-footer">
                         <input type="hidden" name="_id" class="customer_id">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn custom-btn">Update</button>
+                        <button type="submit" class="btn btn-primary">Update</button>
                     </div>
                 </div>
             </div>
@@ -135,13 +127,13 @@
                         <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                     </div>
                     <div class="modal-body">
-                        Are you sure?
+                        Are you sure to delete customer details?
                     </div>
                     <div class="modal-footer">
                         <input type="hidden" name="_id" class="form-control customer_id_removal"
                             required="required">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn custom-btn">Remove</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Remove</button>
                     </div>
                 </div>
             </div>
