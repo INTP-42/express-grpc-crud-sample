@@ -11,6 +11,9 @@ class GrpcServerSingleton {
     this.start = this.start.bind(this);
     this.shutdown = this.shutdown.bind(this);
     this.creds = null
+    this.app = APP_NAME
+    this.port = GRPC_PORT
+    this.enableCertificates = TLS_SUPPORTED
     process.on("SIGINT", () => {
       console.log("Caught interrupt signal");
       this.shutdown();
@@ -21,7 +24,7 @@ class GrpcServerSingleton {
     if (this.creds !== null){
       throw new Error('gRPC server credentials are set during intialization only')
     }
-    if (TLS_SUPPORTED) {
+    if (this.enableCertificates) {
       const rootCert = fs.readFileSync('./ssl/ca.crt');
       const certChain = fs.readFileSync('./ssl/server.crt');
       const privateKey = fs.readFileSync('./ssl/server.pem');
@@ -34,8 +37,7 @@ class GrpcServerSingleton {
       this.creds = grpc.ServerCredentials.createInsecure();
     }
   }
-  
-  start() {
+  async start() {
     if (!this.creds){
       this.generateCred()
     }
@@ -45,24 +47,24 @@ class GrpcServerSingleton {
         customersProto.CustomerService.service,
         customerService
       );
-
-      this.server.bindAsync(
-        GRPC_PORT,
-        this.creds,
-        (err, _) => {
-          if (!err) {
-            console.log(
-              `${APP_NAME} app is listening to grpc at port ${GRPC_PORT}`
-            );
-            this.server.start();
-          } else {
-            console.error(err);
-          }
-        }
-      );
+      await this.bindAndStartServer();
     } else {
       console.log(`${APP_NAME} app is already running on port ${GRPC_PORT}`);
     }
+  }
+
+  async bindAndStartServer() {
+    return new Promise((resolve, reject) => {
+      this.server.bindAsync(this.port, this.creds, (err, _) => {
+        if (!err) {
+          console.log(`${this.app} app is listening to grpc at port ${this.port}`);
+          resolve();
+        } else {
+          console.error(err);
+          reject(err);
+        }
+      });
+    }).then(() => this.server.start());
   }
 
   shutdown() {
@@ -70,9 +72,9 @@ class GrpcServerSingleton {
     if (this.server) {
       this.server.forceShutdown();
       this.server = null;
-      console.log(`${APP_NAME} app has been shut down`);
+      console.log(`${this.app} app has been shut down`);
     } else {
-      console.log(`${APP_NAME} app is not currently running`);
+      console.log(`${this.app} app is not currently running`);
     }
   }
 }
