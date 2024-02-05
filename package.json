@@ -13,7 +13,10 @@
     "start": "NODE_ENV=production node src/app.js",
     "test": "mocha  tests/*.test.js  --timeout 250000 --exit --bail",
     "ssl:gen": "cd ssl && ../scripts/ssl.sh && cd ..",
-    "ssl:win:gen": "cd ssl && powershell -ExecutionPolicy unrestricted ../scripts/ssl.ps1 && cd .."
+    "ssl:win:gen": "cd ssl && powershell -ExecutionPolicy unrestricted ../scripts/ssl.ps1 && cd ..",
+    "docker-up": "npm run docker-build && docker-compose up -d",
+    "docker-down": "docker-compose down",
+    "docker-build": "docker-compose build"
   },
   "keywords": [
     "express",
